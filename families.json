@@ -1,0 +1,12 @@
+{
+    "families": [
+        {
+            "ID": 1,
+            "members": ["Amber", "James", "Sofia"]
+        },
+        {
+            "ID": 2,
+            "members": []
+        }
+    ]
+}
