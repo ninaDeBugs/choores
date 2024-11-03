@@ -2,7 +2,7 @@
 ### to run:
 1. Navigate to the project in terminal
 2. Recommended to create a virtual environment and activate it
-4. Download requirements: `pip install -r req.txt`
+4. Download requirements: `pip install -r requirements.txt`
 5. Run the application: `streamlit run app.py`
 
 ### ***
