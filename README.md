@@ -5,7 +5,7 @@
 4. Download requirements: `pip install -r requirements.txt`
 5. Run the application: `streamlit run app.py`
 
-### ***
-1. The application opens onto the login page. Credentials to use:   
+### ***   
+The application opens onto the login page. Credentials to use:   
    Family ID: 1   
    Member ID: Amber / James / Sofia   
