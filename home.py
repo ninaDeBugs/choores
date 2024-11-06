@@ -1,28 +1,12 @@
 import streamlit as st
 import json
-
-# Cache this function to avoid reloading data unnecessarily
-@st.cache_data
-def load_chores():
-    with open('data.json', 'r') as file:
-        return json.load(file)
-
-@st.cache_data
-def load_family_data():
-    with open('families.json', 'r') as file:
-        return json.load(file)
-
-def save_chores(chores):
-    # Avoid caching here since this function writes data
-    with open('data.json', 'w') as file:
-        json.dump(chores, file, indent=4)
+from login import load_chores, save_chores
 
 def design():
-    st.markdown("<h1 style='text-align: center;'>Choores</h1>", unsafe_allow_html=True)
-
     family_id = st.session_state.get('family_id')
     member_id = st.session_state.get('member_id')
 
+    st.markdown("<h1 style='text-align: center;'>Choores</h1>", unsafe_allow_html=True)
     st.markdown(
         f"""
         <div style='display: flex; justify-content: space-between;'>
@@ -33,14 +17,14 @@ def design():
         unsafe_allow_html=True
     )
 
+    if "chores" not in st.session_state:
+        st.session_state["chores"] = load_chores()
+    chores = st.session_state["chores"].get('chores', [])
+
     # all chores
     if st.sidebar.button("All Chores", key="all_chores"):
         st.session_state.page = "all_chores"
         st.rerun()
-
-    if "chores" not in st.session_state:
-        st.session_state["chores"] = load_chores()
-    chores = st.session_state["chores"].get('chores', [])
 
     # create chore
     with st.sidebar.popover("Create Chore"):
@@ -51,13 +35,13 @@ def design():
                     new_chore = {"name": new_chore_name.capitalize(), "history": [], "next": ""}
                     chores.append(new_chore)
                     save_chores({"chores": chores})  # Save the updated chores
-                    st.session_state["chores"] = {"chores": chores}
-                    st.success(f"Added chore: '{new_chore_name}'")
+                    chores = st.session_state["chores"].get('chores', [])
+                    st.success(f"Added Chore: '{new_chore_name}'")
                     st.rerun()
                 else:
                     st.warning("Chore already exists")
             else:
-                st.warning("Please enter a chore name.")
+                st.warning("Please enter a Chore name.")
 
     # delete chore
     with st.sidebar.popover("Delete Chore"):
@@ -66,28 +50,23 @@ def design():
             if to_remove in [chore['name'].lower() for chore in chores]:
                 chores = [chore for chore in chores if chore['name'].lower() != to_remove]
                 save_chores({"chores": chores})
-                st.session_state["chores"] = {"chores": chores}
+                chores = st.session_state["chores"].get('chores', [])
                 st.success(f"Chore '{to_remove.capitalize()}' has been deleted.")
                 st.session_state.page = "all_chores"
                 st.rerun()
             else:
                 st.error("Chore not found")
 
-    # Search input in the sidebar
+    # Search
     search_query = st.sidebar.text_input("Search chores")
-    if "chores" not in st.session_state:
-        st.session_state["chores"] = load_chores()
-    chores = st.session_state["chores"].get('chores', [])
     filtered_chores = []
-
-    # Filter chores based on search query
     if search_query:
         filtered_chores = [chore for chore in chores if search_query.lower() in chore["name"].lower()]
         if not filtered_chores:
-            st.sidebar.warning("No such chore :/")
+            st.sidebar.warning("No such Chore")
 
-    # Display filtered chores
-    for chore in filtered_chores:
+    
+    for chore in filtered_chores: # Display search results
         if st.sidebar.button(chore["name"], key=f"chore_{chore['name']}"):
             st.session_state.selected_chore = chore['name']
             st.session_state.page = "chore_detail"

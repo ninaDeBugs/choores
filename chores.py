@@ -2,7 +2,8 @@ import streamlit as st
 import pandas as pd
 import json
 from datetime import datetime
-from home import design, load_chores, save_chores
+from login import load_chores, save_chores
+from home import design
 from history import mark_as_done, calc_next
 
 def all_chores_page():
@@ -28,36 +29,36 @@ def all_chores_page():
         st.markdown("<p style='text-align: center;'>(Create a new chore in the sidebar)</p>", unsafe_allow_html=True)
 
 
-
 def chore_detail_page():
     # -------- st.session_state.page = "chore_detail_page"
-    name = st.session_state.get('member_id').lower().capitalize()
-    design()
-
+    member_name = st.session_state.get('member_id').lower().capitalize()
     today = datetime.now().strftime("%b %d")
 
+    design()
     st.divider()
-    selected_chore_name = st.session_state.selected_chore
+    selected_chore_name = st.session_state.get('selected_chore')
+
     if "chores" not in st.session_state:
         st.session_state["chores"] = load_chores()
     chores = st.session_state["chores"].get('chores', [])
     selected_chore = next((chore for chore in chores if chore['name'] == selected_chore_name), None)
     st.markdown(f"<h4 style='text-align: center;'>{selected_chore['name']}</h4>", unsafe_allow_html=True)
     
+    # mark as done for logged-in member
     if st.button("MARK AS DONE"):
-        mark_as_done(selected_chore['name'], name, today)
-        st.success(f"'{selected_chore['name']}' marked as done for {name} on {today}")
-        st.rerun() 
+        mark_as_done(selected_chore['name'], member_name, today)
+        st.success(f"**'{selected_chore['name']}'** marked as done for **{member_name}** on **{today}**")
 
     # calculate next
     if not selected_chore['next']:
         selected_chore['next'] = calc_next(selected_chore)
         save_chores({"chores": chores})
-        st.session_state["chores"] = {"chores": chores}
+        chores = st.session_state["chores"].get('chores', [])
 
     st.markdown(f"<h6>Next : <span style='color:#6293e3'>{selected_chore['next']}</span></h6>", unsafe_allow_html=True)
     st.markdown("</br>", unsafe_allow_html=True)
 
+    # history
     st.markdown(f"<h6>History: </h6>", unsafe_allow_html=True)
     if selected_chore['history']:
         df = pd.DataFrame(selected_chore['history'])

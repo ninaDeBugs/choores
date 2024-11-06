@@ -21,3 +21,12 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+# SESSION STATE VARIABLES
+
+# family_id
+# member_id
+# page
+# families (json)
+# chores (json)
+# selected_chore
