@@ -1,16 +1,10 @@
-# choores   
-link
+# choores
+### to run:
+1. Navigate to project in terminal
+2. Download requirements: `pip install -r req.txt`
+3. Run the application: `streamlit run app.py`
 
-### to run locally:
-1. navigate to project in terminal
-2. install requirements: `pip install -r requirements.txt`
-3. run the application: `streamlit run app.py`    
-the application opens onto the login page. credentials to use:   
-   * family ID: 1   
-   * member ID: Amber / James / Sofia
-
-### 'initial' deployment features:
-💻  login   
-🔍  view all chores    
-📋  create, delete, & search chores    
-🔄  rotation of chores: history tracking & next    
+### ***
+1. The application opens onto the login page. Credentials to use:   
+   Family ID: 1   
+   Member ID: Amber / James / Sofia   
