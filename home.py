@@ -1,6 +1,6 @@
 import streamlit as st
 import json
-from login import load_chores, save_chores
+from login import load_chores, save_chores, get_chores_from_cache
 
 def design():
     family_id = st.session_state.get('family_id')
@@ -17,9 +17,8 @@ def design():
         unsafe_allow_html=True
     )
 
-    if "chores" not in st.session_state:
-        st.session_state["chores"] = load_chores()
-    chores = st.session_state["chores"].get('chores', [])
+    # chores = load_chores().get('chores')
+    chores = get_chores_from_cache().get('chores')
 
     # all chores
     if st.sidebar.button("All Chores", key="all_chores"):
@@ -35,11 +34,10 @@ def design():
                     new_chore = {"name": new_chore_name.capitalize(), "history": [], "next": ""}
                     chores.append(new_chore)
                     save_chores({"chores": chores})  # Save the updated chores
-                    chores = st.session_state["chores"].get('chores', [])
                     st.success(f"Added Chore: '{new_chore_name}'")
                     st.rerun()
                 else:
-                    st.warning("Chore already exists")
+                    st.error("Chore already exists")
             else:
                 st.warning("Please enter a Chore name.")
 
@@ -50,7 +48,6 @@ def design():
             if to_remove in [chore['name'].lower() for chore in chores]:
                 chores = [chore for chore in chores if chore['name'].lower() != to_remove]
                 save_chores({"chores": chores})
-                chores = st.session_state["chores"].get('chores', [])
                 st.success(f"Chore '{to_remove.capitalize()}' has been deleted.")
                 st.session_state.page = "all_chores"
                 st.rerun()

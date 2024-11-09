@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 import json
 from datetime import datetime
-from login import load_chores, save_chores
+from login import load_chores, save_chores, get_chores_from_cache
 from home import design
 from history import mark_as_done, calc_next
 
@@ -13,10 +13,9 @@ def all_chores_page():
     st.divider()
     st.markdown("<h4 style='text-align: center;'>All Chores</h4>", unsafe_allow_html=True)
 
-    if "chores" not in st.session_state:
-        st.session_state["chores"] = load_chores()
-    chores = st.session_state["chores"].get('chores', [])
-    
+    # chores = load_chores().get('chores')
+    chores = get_chores_from_cache().get('chores')
+
     if chores:
         for chore in chores:
             if st.button(chore['name']):
@@ -31,16 +30,16 @@ def all_chores_page():
 
 def chore_detail_page():
     # -------- st.session_state.page = "chore_detail_page"
-    member_name = st.session_state.get('member_id').lower().capitalize()
-    today = datetime.now().strftime("%b %d")
-
     design()
     st.divider()
+
+    today = datetime.now().strftime("%b %d")
+    member_name = st.session_state.get('member_id').lower().capitalize()
     selected_chore_name = st.session_state.get('selected_chore')
 
-    if "chores" not in st.session_state:
-        st.session_state["chores"] = load_chores()
-    chores = st.session_state["chores"].get('chores', [])
+    # chores = load_chores().get('chores')
+    chores = get_chores_from_cache().get('chores')
+    
     selected_chore = next((chore for chore in chores if chore['name'] == selected_chore_name), None)
     st.markdown(f"<h4 style='text-align: center;'>{selected_chore['name']}</h4>", unsafe_allow_html=True)
     
@@ -53,7 +52,6 @@ def chore_detail_page():
     if not selected_chore['next']:
         selected_chore['next'] = calc_next(selected_chore)
         save_chores({"chores": chores})
-        chores = st.session_state["chores"].get('chores', [])
 
     st.markdown(f"<h6>Next : <span style='color:#6293e3'>{selected_chore['next']}</span></h6>", unsafe_allow_html=True)
     st.markdown("</br>", unsafe_allow_html=True)

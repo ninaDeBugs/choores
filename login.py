@@ -1,32 +1,57 @@
 import streamlit as st
 import json
 import os
+from filelock import FileLock
 
-@st.cache_data
-def load_chores():
-    fam_id = st.session_state.get('family_id')
-    filename = f'{fam_id}_data.json'
+# @st.cache_data
+# def load_chores():
+#     fam_id = st.session_state.get('family_id')
+#     filename = f'{fam_id}_data.json'
     
-    # If the file doesn't exist, create w/ initial content
-    if not os.path.exists(filename):
-        save_chores( {"chores": []} )
+#     # If the file doesn't exist, create w/ initial content
+#     if not os.path.exists(filename):
+#         save_chores( {"chores": []} )
 
-    with open(filename, 'r') as file:
-        return json.load(file)
-
-def save_chores(chores):
-    fam_id = st.session_state.get('family_id')
-    filename = f'{fam_id}_data.json'
-    with open(filename, 'w') as file:
-        json.dump(chores, file, indent=4)
-
-    # update session state
-    st.session_state["chores"] = chores
+#     with open(filename, 'r') as file:
+#         return json.load(file)
 
 @st.cache_data
 def load_family_data():
     with open('families.json', 'r') as file:
         return json.load(file)
+        
+def load_chores():
+    fam_id = st.session_state.get('family_id')
+    filename = f'{fam_id}_data.json'
+    lock = FileLock(f"{filename}.lock")  # File lock object
+
+    # If the file doesn't exist, create it with initial content
+    if not os.path.exists(filename):
+        save_chores({"chores": []}) 
+
+    with lock:  # Acquire the lock before reading
+        with open(filename, 'r') as file:
+            return json.load(file)
+
+@st.cache_data(ttl=60)  # Cache for 60 seconds
+def get_chores_from_cache():
+    return load_chores()
+
+def save_chores(chores):
+    # fam_id = st.session_state.get('family_id')
+    # filename = f'{fam_id}_data.json'
+    # with open(filename, 'w') as file:
+    #     json.dump(chores, file, indent=4)
+
+    fam_id = st.session_state.get('family_id')
+    filename = f'{fam_id}_data.json'
+    lock = FileLock(f"{filename}.lock")
+
+    with lock:
+        with open(filename, 'w') as file:
+            json.dump(chores, file, indent=4)
+
+    st.cache_data.clear()  # Clear cache after saving to ensure freshness
 
 def login_page():
     # -------- st.session_state.page = "login"
@@ -42,9 +67,7 @@ def login_page():
     member_id = st.text_input("Member ID", placeholder="Enter Your Name", value=st.session_state['member_id'], key="member_id_input")
   
     if st.button("Log In", key="log_in"):
-        if "families" not in st.session_state:
-            st.session_state["families"] = load_family_data()
-        families_json = st.session_state["families"]
+        families_json = load_family_data()
 
         try:
             family_id = int(family_id)
@@ -62,13 +85,6 @@ def login_page():
         if member_id.rstrip().lower() not in [member.rstrip().lower() for member in family_info["members"]]:
             st.warning("You are not a member of this family.")
             return
-
-        # # Explicitly clear and reload session data for chores
-        # if "chores" in st.session_state:
-        #     st.session_state.pop("chores")
-        
-        # Confirm clear and reload fresh data from file
-        st.session_state["chores"] = load_chores()
 
         # If both checks pass, update session state and log in
         st.session_state['family_id'] = family_id

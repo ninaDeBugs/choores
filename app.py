@@ -7,7 +7,7 @@ def main():
     if "page" not in st.session_state:
         st.session_state.page = "login"
     if "selected_chore" not in st.session_state:
-        st.session_state.selected_chore = "none"
+        st.session_state.selected_chore = ""
 
     if st.session_state.page == "login":
         login_page()
@@ -22,11 +22,10 @@ def main():
 if __name__ == "__main__":
     main()
 
+
 # SESSION STATE VARIABLES
 
 # family_id
 # member_id
 # page
-# families (json)
-# chores (json)
 # selected_chore
