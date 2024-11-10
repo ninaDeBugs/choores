@@ -13,7 +13,6 @@ def all_chores_page():
     st.divider()
     st.markdown("<h4 style='text-align: center;'>All Chores</h4>", unsafe_allow_html=True)
 
-    # chores = load_chores().get('chores')
     chores = get_chores_from_cache().get('chores')
 
     if chores:
@@ -37,7 +36,6 @@ def chore_detail_page():
     member_name = st.session_state.get('member_id').lower().capitalize()
     selected_chore_name = st.session_state.get('selected_chore')
 
-    # chores = load_chores().get('chores')
     chores = get_chores_from_cache().get('chores')
     
     selected_chore = next((chore for chore in chores if chore['name'] == selected_chore_name), None)
@@ -46,7 +44,10 @@ def chore_detail_page():
     # mark as done for logged-in member
     if st.button("MARK AS DONE"):
         mark_as_done(selected_chore['name'], member_name, today)
-        st.success(f"**'{selected_chore['name']}'** marked as done for **{member_name}** on **{today}**")
+        st.rerun()
+    if "success_message" in st.session_state:
+        st.success(st.session_state["success_message"])
+        del st.session_state["success_message"]
 
     # calculate next
     if not selected_chore['next']:

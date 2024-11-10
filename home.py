@@ -17,7 +17,6 @@ def design():
         unsafe_allow_html=True
     )
 
-    # chores = load_chores().get('chores')
     chores = get_chores_from_cache().get('chores')
 
     # all chores

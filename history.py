@@ -4,7 +4,6 @@ from datetime import datetime
 from login import load_chores, save_chores, load_family_data, get_chores_from_cache
 
 def mark_as_done(chore_name, member_name, todays_date):
-    # chores = load_chores().get('chores')
     chores = get_chores_from_cache().get('chores')
 
     # calculate history & next
@@ -15,7 +14,7 @@ def mark_as_done(chore_name, member_name, todays_date):
 
     # update
     save_chores({"chores": chores})
-    st.rerun()
+    st.session_state["success_message"] = f"**'{chore_name}'** marked as done by **{member_name}** on **{todays_date}**"
 
 def calc_next(chore):
     # get default member order    
