@@ -33,7 +33,8 @@ def design():
                     new_chore = {"name": new_chore_name.capitalize(), "history": [], "next": ""}
                     chores.append(new_chore)
                     save_chores({"chores": chores})  # Save the updated chores
-                    st.success(f"Added Chore: '{new_chore_name}'")
+                    st.session_state["success_message"] = f"Added Chore: '{new_chore_name}'"
+                    st.session_state.page = "all_chores"
                     st.rerun()
                 else:
                     st.error("Chore already exists")
@@ -47,11 +48,15 @@ def design():
             if to_remove in [chore['name'].lower() for chore in chores]:
                 chores = [chore for chore in chores if chore['name'].lower() != to_remove]
                 save_chores({"chores": chores})
-                st.success(f"Chore '{to_remove.capitalize()}' has been deleted.")
+                st.session_state["success_message"] = f"Chore '{to_remove.capitalize()}' has been deleted."
                 st.session_state.page = "all_chores"
                 st.rerun()
             else:
                 st.error("Chore not found")
+
+    if "success_message" in st.session_state:
+        st.success(st.session_state["success_message"])
+        del st.session_state["success_message"]
 
     # Search
     search_query = st.sidebar.text_input("Search chores")
