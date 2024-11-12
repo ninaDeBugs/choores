@@ -1,6 +1,5 @@
 import streamlit as st
-import json
-from login import load_chores, save_chores, get_chores_from_cache
+from firebase_config import load_chores, save_chores, get_chores_from_cache  # Import Firestore functions
 
 def design():
     family_id = st.session_state.get('family_id')
@@ -17,14 +16,15 @@ def design():
         unsafe_allow_html=True
     )
 
+    # Fetch chores from Firestore
     chores = get_chores_from_cache().get('chores')
 
-    # all chores
+    # Sidebar buttons
     if st.sidebar.button("All Chores", key="all_chores"):
         st.session_state.page = "all_chores"
         st.rerun()
 
-    # create chore
+    # Create chore
     with st.sidebar.popover("Create Chore"):
         new_chore_name = st.text_input("Chore Name").lower().strip()
         if st.button("Add Chore"):
@@ -39,21 +39,22 @@ def design():
                 else:
                     st.error("Chore already exists")
             else:
-                st.warning("Please enter a Chore name.")
+                st.warning("Please enter a Chore name")
 
-    # delete chore
+    # Delete chore
     with st.sidebar.popover("Delete Chore"):
         to_remove = st.text_input("Which chore would you like to delete?").lower().strip()
         if st.button("DELETE", key="delete_button"):
             if to_remove in [chore['name'].lower() for chore in chores]:
                 chores = [chore for chore in chores if chore['name'].lower() != to_remove]
                 save_chores({"chores": chores})
-                st.session_state["success_message"] = f"Chore '{to_remove.capitalize()}' has been deleted."
+                st.session_state["success_message"] = f"Chore '{to_remove.capitalize()}' has been deleted"
                 st.session_state.page = "all_chores"
                 st.rerun()
             else:
                 st.error("Chore not found")
 
+    # Show success message if any
     if "success_message" in st.session_state:
         st.success(st.session_state["success_message"])
         del st.session_state["success_message"]
@@ -66,8 +67,8 @@ def design():
         if not filtered_chores:
             st.sidebar.warning("No such Chore")
 
-    
-    for chore in filtered_chores: # Display search results
+    # Display filtered chores
+    for chore in filtered_chores:
         if st.sidebar.button(chore["name"], key=f"chore_{chore['name']}"):
             st.session_state.selected_chore = chore['name']
             st.session_state.page = "chore_detail"
@@ -76,4 +77,3 @@ def design():
 def home_page():
     # -------- st.session_state.page = "home"
     design()
-

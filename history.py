@@ -1,9 +1,9 @@
 import streamlit as st
-import json
 from datetime import datetime
-from login import load_chores, save_chores, load_family_data, get_chores_from_cache
+from firebase_config import load_chores, save_chores, get_chores_from_cache, load_family_data
 
 def mark_as_done(chore_name, member_name, todays_date):
+    # Fetch chores from Firestore
     chores = get_chores_from_cache().get('chores')
 
     # calculate history & next
@@ -12,22 +12,29 @@ def mark_as_done(chore_name, member_name, todays_date):
             chore['history'].append([member_name, todays_date]) 
             chore['next'] = calc_next(chore)
 
-    # update
+    # Save updated chores to Firestore
     save_chores({"chores": chores})
     st.session_state["success_message"] = f"**'{chore_name}'** marked as done by **{member_name}** on **{todays_date}**"
 
 def calc_next(chore):
-    # get default member order    
+    # get default member order from Firestore
     family_id = int(st.session_state.get('family_id'))
-    families_json = load_family_data()
-    family_info = next((f for f in families_json["families"] if f["ID"] == family_id))
-    dft_order = family_info['members']
+    families_json = load_family_data()  # Fetch family data from Firestore
+    family_info = next((f for f in families_json["families"] if f["ID"] == family_id), None)
+    
+    if not family_info:
+        st.error("Family data not found.")
+        print("Family data not found.")
+        return None
+    
+    dft_order = family_info['members']  # Default member order
 
-    # update next accordingly
-    history = chore.get('history')
+    # calculate the next member based on the chore history
+    history = chore.get('history', [])
     if not history:
         ans = dft_order[0]
     else:
+        # Count how many times each member has done the chore
         member_counter = {m: 0 for m in dft_order}
         for entry in history:
             member = entry[0]  # first element in each history entry is the member name
@@ -39,8 +46,8 @@ def calc_next(chore):
             # reset the counter if everyone's caught up
             chore['history'] = []
             ans = dft_order[0]
-        else: 
-            # next is whoever has lowest num & to break ties, whoever is next in default order
+        else:
+            # next is whoever has the lowest count & to break ties, whoever is next in default order
             leastnum = min(member_counter.values())
             ans = next(m for m in dft_order if member_counter[m] == leastnum)
 

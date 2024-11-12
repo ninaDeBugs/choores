@@ -17,15 +17,13 @@ def main():
         all_chores_page()
     elif st.session_state.page == "chore_detail":
         chore_detail_page()
-    
+
 
 if __name__ == "__main__":
     main()
 
-
 # SESSION STATE VARIABLES
-
-# family_id
-# member_id
-# page
-# selected_chore
+# family_id - stored to track the family context
+# member_id - stored to track the member who is logged in
+# page - tracks which page is being shown (login, home, all_chores, chore_detail)
+# selected_chore - stores the name of the selected chore for details
