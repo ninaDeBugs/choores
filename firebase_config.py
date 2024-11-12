@@ -38,9 +38,6 @@ def load_family_data():
 # Function to load chores for a specific family (with collection creation if needed)
 def load_chores():
     fam_id = st.session_state.get('family_id')
-    # if not fam_id:
-    #     return {"chores": []}  # Return an empty structure if no family is set
-
     chores_collection_name = f"{fam_id}_chores"
     chores_ref = db.collection(chores_collection_name)
 
@@ -48,10 +45,9 @@ def load_chores():
         # Fetch all the documents in the collection
         chores_docs = list(chores_ref.stream())
 
-        if not chores_docs:  # If the collection is empty, create an initial document
-            chores_ref.document("first_document").set({
-                "initial_placeholder": "This is the start of the chores list."
-            })
+        # If there are no chores, return an empty list without creating any documents
+        if not chores_docs:
+            return {"chores": []}
 
         # Return the chores as a list of dictionaries
         chores = [doc.to_dict() for doc in chores_ref.stream()]
@@ -61,6 +57,7 @@ def load_chores():
         st.error(f"Error loading chores: {e}")
         print(f"Error loading chores: {e}")
         # return {"chores": []}
+
 
 @st.cache_data(ttl=60)  # Cache for 60 seconds
 def get_chores_from_cache():
