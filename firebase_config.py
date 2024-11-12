@@ -61,7 +61,8 @@ def load_chores():
 
 @st.cache_data(ttl=60)  # Cache for 60 seconds
 def get_chores_from_cache():
-    return load_chores()
+    chores_data = load_chores()
+    return chores_data.get('chores', []) 
 
 # Function to save chores for a specific family
 def save_chores(chores):
