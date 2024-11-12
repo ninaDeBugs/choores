@@ -15,7 +15,7 @@ def all_chores_page():
     # Fetch chores from Firestore
     chores = get_chores_from_cache().get('chores')
 
-    if chores:
+    if chores and chores["chores"]:
         for chore in chores:
             if st.button(chore['name']):
                 st.session_state.selected_chore = chore['name']
