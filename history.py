@@ -4,7 +4,7 @@ from firebase_config import load_chores, save_chores, get_chores_from_cache, loa
 
 def mark_as_done(chore_name, member_name, todays_date):
     # Fetch chores from Firestore
-    chores = get_chores_from_cache()
+    chores = get_chores_from_cache().get('chores')
 
     # calculate history & next
     for chore in chores:

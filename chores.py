@@ -13,7 +13,7 @@ def all_chores_page():
     st.markdown("<h4 style='text-align: center;'>All Chores</h4>", unsafe_allow_html=True)
 
     # Fetch chores from Firestore
-    chores = get_chores_from_cache()
+    chores = get_chores_from_cache().get('chores')
 
     if chores and chores["chores"]:
         for chore in chores:
@@ -37,7 +37,7 @@ def chore_detail_page():
     selected_chore_name = st.session_state.get('selected_chore')
 
     # Fetch chores from Firestore
-    chores = get_chores_from_cache()
+    chores = get_chores_from_cache().get('chores')
 
     # Find the selected chore from the list
     selected_chore = next((chore for chore in chores if chore['name'] == selected_chore_name), None)
