@@ -46,7 +46,7 @@ def load_chores():
         chores_docs = list(chores_ref.stream())
 
         if not chores_docs:
-            return {"chores": []}  # Return empty dictionary with 'chores' key if no chores are found
+            return None  
 
         # Return the list of chores inside a dictionary
         chores = [doc.to_dict() for doc in chores_ref.stream()]
@@ -59,7 +59,7 @@ def load_chores():
 
 # @st.cache_data(ttl=60)  # Cache for 60 seconds
 def get_chores_from_cache():
-    chores = st.session_state.get('chores', None)
+    chores = load_chores()
     if chores:
         return {"chores": chores}  # return as a dictionary
     else:
