@@ -12,20 +12,21 @@ def all_chores_page():
     st.divider()
     st.markdown("<h4 style='text-align: center;'>All Chores</h4>", unsafe_allow_html=True)
 
-    # Fetch chores from Firestore
-    chores = get_chores_from_cache().get('chores')
+    chores = get_chores_from_cache()  # It will return [] if no chores exist
 
-    if chores:
+    # Log the data for debugging
+    st.write(chores)  # This will print chores, it should be [] if no chores are found
+
+    if chores:  # Only run this if there are chores (not an empty list)
         for chore in chores:
             if st.button(chore['name']):
                 st.session_state.selected_chore = chore['name']
                 st.session_state.page = "chore_detail"
                 st.rerun()
 
-    else:  # if no chores
+    else:  # If no chores are found
         st.markdown("<h5 style='text-align: center;'> <span style='color:#C3391C'> No chores found </span></h5>", unsafe_allow_html=True)
         st.markdown("<p style='text-align: center;'>(Create a new chore in the sidebar)</p>", unsafe_allow_html=True)
-
 
 def chore_detail_page():
     # -------- st.session_state.page = "chore_detail_page"
