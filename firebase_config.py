@@ -73,11 +73,17 @@ def save_chores(chores):
     chores_ref = db.collection(chores_collection_name)
 
     try:
+        # Debugging: Print the chores to see if the new chore is added correctly
+        print("Chores to be saved:", chores)
+
         for chore in chores:
             chore_name = chore["name"]
             chore_ref = chores_ref.document(chore_name)
-            chore_ref.set(chore)
+            chore_ref.set(chore)  # Save the chore
 
-        st.cache_data.clear()  # Clear cache to ensure data freshness
+        st.cache_data.clear()  # Clear the cache to ensure data freshness
+
     except Exception as e:
         st.error(f"Error saving chores: {e}")
+        print(f"Error saving chores: {e}")
+
