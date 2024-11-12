@@ -17,7 +17,7 @@ def design():
     )
 
     # Fetch chores from Firestore
-    chores = get_chores_from_cache().get('chores')
+    chores = get_chores_from_cache()
 
     # Sidebar buttons
     if st.sidebar.button("All Chores", key="all_chores"):

@@ -12,21 +12,20 @@ def all_chores_page():
     st.divider()
     st.markdown("<h4 style='text-align: center;'>All Chores</h4>", unsafe_allow_html=True)
 
-    chores = get_chores_from_cache()  # It will return [] if no chores exist
+    # Fetch chores from Firestore
+    chores = get_chores_from_cache()
 
-    # Log the data for debugging
-    st.write(chores)  # This will print chores, it should be [] if no chores are found
-
-    if chores:  # Only run this if there are chores (not an empty list)
+    if chores and chores["chores"]:
         for chore in chores:
             if st.button(chore['name']):
                 st.session_state.selected_chore = chore['name']
                 st.session_state.page = "chore_detail"
                 st.rerun()
 
-    else:  # If no chores are found
+    else:  # if no chores
         st.markdown("<h5 style='text-align: center;'> <span style='color:#C3391C'> No chores found </span></h5>", unsafe_allow_html=True)
         st.markdown("<p style='text-align: center;'>(Create a new chore in the sidebar)</p>", unsafe_allow_html=True)
+
 
 def chore_detail_page():
     # -------- st.session_state.page = "chore_detail_page"
@@ -38,7 +37,7 @@ def chore_detail_page():
     selected_chore_name = st.session_state.get('selected_chore')
 
     # Fetch chores from Firestore
-    chores = get_chores_from_cache().get('chores')
+    chores = get_chores_from_cache()
 
     # Find the selected chore from the list
     selected_chore = next((chore for chore in chores if chore['name'] == selected_chore_name), None)

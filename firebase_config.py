@@ -45,24 +45,21 @@ def load_chores():
         # Fetch all the documents in the collection
         chores_docs = list(chores_ref.stream())
 
-        # If there are no chores, return an empty list without creating any documents
-        if not chores_docs:
-            return {"chores": []}
+        if not chores_docs:  # If the collection is empty, return an empty list
+            return []  # Return an empty list instead of a dict
 
         # Return the chores as a list of dictionaries
         chores = [doc.to_dict() for doc in chores_ref.stream()]
-        return {"chores": chores}
+        return chores  # No need to wrap it in a dict with 'chores'
 
     except Exception as e:
         st.error(f"Error loading chores: {e}")
         print(f"Error loading chores: {e}")
-        # return {"chores": []}
-
+        # return []  # Return an empty list if an error occurs
 
 @st.cache_data(ttl=60)  # Cache for 60 seconds
 def get_chores_from_cache():
-    chores_data = load_chores()
-    return chores_data.get('chores', []) 
+    return load_chores()
 
 # Function to save chores for a specific family
 def save_chores(chores):
