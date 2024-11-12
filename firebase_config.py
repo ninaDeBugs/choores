@@ -57,7 +57,7 @@ def load_chores():
         # return {"chores": []}  # return empty dictionary if error occurs
 
 
-@st.cache_data(ttl=60)  # Cache for 60 seconds
+# @st.cache_data(ttl=60)  # Cache for 60 seconds
 def get_chores_from_cache():
     chores = st.session_state.get('chores', None)
     if chores:
