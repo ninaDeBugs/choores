@@ -56,8 +56,8 @@ def get_chores_from_cache():
 # update or create chore
 def save_chore(chore):
     try:
-        family_id = st.session_state.get('family_id')
-        chores_collection_name = f"{family_id}_chores"
+        fam_id = st.session_state.get('family_id')
+        chores_collection_name = f"{fam_id}_chores"
         chore_name = chore['name']  # Chore name is the document ID
         chore_ref = db.collection(chores_collection_name).document(chore_name)
         chore_ref.set(chore) 

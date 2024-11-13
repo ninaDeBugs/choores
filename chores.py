@@ -44,7 +44,7 @@ def chore_detail_page():
 
     # Mark as done for logged-in member
     if st.button("MARK AS DONE"):
-        mark_as_done(selected_chore['name'], member_name, today)
+        selected_chore = mark_as_done(selected_chore, member_name, today)
         st.rerun()
 
     if "success_message" in st.session_state:
