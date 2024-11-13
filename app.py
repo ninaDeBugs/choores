@@ -2,6 +2,7 @@ import streamlit as st
 from login import login_page
 from home import home_page
 from chores import all_chores_page, chore_detail_page
+from firebase_config import test_firestore_connection
 
 def main():
     test_firestore_connection()
