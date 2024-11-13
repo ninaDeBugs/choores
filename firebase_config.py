@@ -70,6 +70,7 @@ def save_chores(chores):
             chore_name = chore["name"]
             chore_ref = chores_ref.document(chore_name)
             chore_ref.set(chore)
+            st.warning(f"Added chore to db: {chore}")
 
         st.cache_data.clear()  # Clear cache to ensure data freshness
     except Exception as e:

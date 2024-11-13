@@ -33,7 +33,7 @@ def design():
                     new_chore = {"name": new_chore_name.capitalize(), "history": [], "next": ""}
                     chores.append(new_chore)
                     save_chores(chores)  # Save the updated chores
-                    st.session_state["success_message"] = f"Added Chore: '{new_chore_name}'"
+                    st.session_state["success_message"] = f"Added Chore: '{new_chore_name}' ... {chores}"
                     st.session_state.page = "all_chores"
                     st.rerun()
                 else:
