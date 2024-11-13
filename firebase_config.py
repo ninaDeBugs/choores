@@ -60,15 +60,19 @@ def save_chore(chore):
         chores_collection_name = f"{fam_id}_chores"
         chore_name = chore['name']  # Chore name is the document ID
         chore_ref = db.collection(chores_collection_name).document(chore_name)
-        st.info(chore + "attempting to save to firestore")
+        st.session_state.success_message = f"{chore} .... .... attempting to save to firestore"
         chore_ref.set(chore)  # Attempt to save the chore
-        st.warning("saved chore")
+        st.session_state.success_message = "saved chore"
         
         st.cache_data.clear()  # Clear cache to ensure fresh data next time
-        st.success("Chore saved successfully and cache cleared.")
+        st.session_state.success_message = "Chore saved successfully and cache cleared."
     except Exception as e:
         print(f"Error updating chore: {e}")
         st.error(f"Error saving chore: {e}")
+
+if "success_message" in st.session_state:
+        st.success(st.session_state["success_message"])
+        del st.session_state["success_message"]
 
 # delete chore
 def delete_chore(chore_name):
