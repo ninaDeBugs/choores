@@ -1,5 +1,5 @@
 import streamlit as st
-from firebase_config import load_chores, save_chores, get_chores_from_cache, delet_chore  # Import Firestore functions
+from firebase_config import load_chores, save_chores, get_chores_from_cache, delete_chore  # Import Firestore functions
 
 def design():
     family_id = st.session_state.get('family_id')
@@ -54,21 +54,19 @@ def design():
     #         else:
     #             st.error("Chore not found")
     with st.sidebar.popover("Delete Chore"):
-    to_remove = st.text_input("Which chore would you like to delete?").lower().strip()
-    if st.button("DELETE", key="delete_button"):
-        matching_chores = [chore for chore in chores if chore['name'].lower() == to_remove]
+        to_remove = st.text_input("Which chore would you like to delete?").lower().strip()
+        if st.button("DELETE", key="delete_button"):
+            matching_chores = [chore for chore in chores if chore['name'].lower() == to_remove]
 
-        if matching_chores:
-            # Call delete_chore from firebase_config
-            chore_name_to_delete = matching_chores[0]['name']  # Get the exact case-sensitive name
-            success = delete_chore(chore_name_to_delete)  # Call the function
+            if matching_chores:
+                success = delete_chore(matching_chores[0]['name'])
 
-            chores = [chore for chore in chores if chore['name'].lower() != to_remove]
-            st.session_state["success_message"] = f"Chore '{to_remove.capitalize()}' has been deleted."
-            st.session_state.page = "all_chores"
-            st.rerun()
-        else:
-            st.error("Chore not found.")
+                chores = [chore for chore in chores if chore['name'].lower() != to_remove]
+                st.session_state["success_message"] = f"Chore '{to_remove.capitalize()}' has been deleted."
+                st.session_state.page = "all_chores"
+                st.rerun()
+            else:
+                st.error("Chore not found.")
 
     # Show success message if any
     if "success_message" in st.session_state:
