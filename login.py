@@ -14,15 +14,15 @@ def login_page():
     member_id = st.text_input("Member ID", placeholder="Enter Your Name", value=st.session_state['member_id'], key="member_id_input")
   
     if st.button("Log In", key="log_in"):
-        families_json = load_family_data()  # Use the Firestore function
-
+        families_json = load_family_data() 
+        
+        # Check if the family ID exists
         try:
             family_id = int(family_id)
         except ValueError:
             st.error("Please enter a valid numeric Family ID.")
             return
 
-        # Check if the family ID exists
         family_info = next((f for f in families_json if f["ID"] == family_id), None)
         if family_info is None:
             st.error("The Family ID does not exist.")

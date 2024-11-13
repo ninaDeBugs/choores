@@ -4,7 +4,8 @@ from home import home_page
 from chores import all_chores_page, chore_detail_page
 
 def main():
-    st.cache_data.clear() 
+    st.cache_data.clear() # ensure fresh data from db
+
     if "page" not in st.session_state:
         st.session_state.page = "login"
     if "selected_chore" not in st.session_state:
@@ -24,7 +25,7 @@ if __name__ == "__main__":
     main()
 
 # SESSION STATE VARIABLES
-# family_id - stored to track the family context
-# member_id - stored to track the member who is logged in
-# page - tracks which page is being shown (login, home, all_chores, chore_detail)
-# selected_chore - stores the name of the selected chore for details
+# family_id -> family context
+# member_id -> to track the member who is logged in
+# page -> tracks which page is being shown (login, home, all_chores, chore_detail)
+# selected_chore -> stores the name of chore selcted by user

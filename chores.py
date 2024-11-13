@@ -1,9 +1,28 @@
 import streamlit as st
 import pandas as pd
 from datetime import datetime
-from firebase_config import load_chores, get_chores_from_cache, save_chore
+from firebase_config import get_chores_from_cache, save_chore
 from home import design
 from history import mark_as_done, calc_next
+
+# def all_chores_page():
+#     # -------- st.session_state.page = "all_chores"
+#     design()
+
+#     st.divider()
+#     st.markdown("<h4 style='text-align: center;'>All Chores</h4>", unsafe_allow_html=True)
+
+#     chores = get_chores_from_cache()
+#     if chores:
+#         for chore in chores:
+#             if st.button(chore['name']):
+#                 st.session_state.selected_chore = chore['name']
+#                 st.session_state.page = "chore_detail"
+#                 st.rerun()
+
+#     else:  # if no chores
+#         st.markdown("<h5 style='text-align: center;'> <span style='color:#C3391C'> No chores found </span></h5>", unsafe_allow_html=True)
+#         st.markdown("<p style='text-align: center;'>(Create a new chore in the sidebar)</p>", unsafe_allow_html=True)
 
 def all_chores_page():
     # -------- st.session_state.page = "all_chores"
@@ -12,14 +31,25 @@ def all_chores_page():
     st.divider()
     st.markdown("<h4 style='text-align: center;'>All Chores</h4>", unsafe_allow_html=True)
 
-    # Fetch chores from Firestore
     chores = get_chores_from_cache()
+    
     if chores:
-        for chore in chores:
-            if st.button(chore['name']):
-                st.session_state.selected_chore = chore['name']
-                st.session_state.page = "chore_detail"
-                st.rerun()
+        col1, col2 = st.columns(2)
+
+        # Depending on the index, decide which column the button will go into
+        for idx, chore in enumerate(chores):
+            if idx % 2 == 0:
+                with col1:
+                    if st.button(chore['name']):
+                        st.session_state.selected_chore = chore['name']
+                        st.session_state.page = "chore_detail"
+                        st.rerun()
+            else:
+                with col2:
+                    if st.button(chore['name']):
+                        st.session_state.selected_chore = chore['name']
+                        st.session_state.page = "chore_detail"
+                        st.rerun()
 
     else:  # if no chores
         st.markdown("<h5 style='text-align: center;'> <span style='color:#C3391C'> No chores found </span></h5>", unsafe_allow_html=True)
@@ -35,10 +65,8 @@ def chore_detail_page():
     member_name = st.session_state.get('member_id').lower().capitalize()
     selected_chore_name = st.session_state.get('selected_chore')
 
-    # Fetch chores from Firestore
-    chores = get_chores_from_cache()
 
-    # Find the selected chore from the list
+    chores = get_chores_from_cache()
     selected_chore = next((chore for chore in chores if chore['name'] == selected_chore_name), None)
     st.markdown(f"<h4 style='text-align: center;'>{selected_chore['name']}</h4>", unsafe_allow_html=True)
 
@@ -54,7 +82,7 @@ def chore_detail_page():
     # Calculate next member to do the chore
     if not selected_chore['next']:
         selected_chore['next'] = calc_next(selected_chore)
-        save_chore(selected_chore)  # Save updated chore data back to Firestore
+        save_chore(selected_chore) 
 
     st.markdown(f"<h6>Next : <span style='color:#6293e3'>{selected_chore['next']}</span></h6>", unsafe_allow_html=True)
     st.markdown("</br>", unsafe_allow_html=True)
@@ -68,4 +96,3 @@ def chore_detail_page():
         st.write("No history available.")
     
     st.caption("Only the last cycle is shown")
-

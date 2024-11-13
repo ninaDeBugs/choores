@@ -1,5 +1,5 @@
 import streamlit as st
-from firebase_config import load_chores, get_chores_from_cache, save_chore, delete_chore  # Import Firestore functions
+from firebase_config import get_chores_from_cache, save_chore, delete_chore  # Import Firestore functions
 
 def design():
     family_id = st.session_state.get('family_id')
@@ -16,10 +16,9 @@ def design():
         unsafe_allow_html=True
     )
 
-    # Fetch chores from Firestore
     chores = get_chores_from_cache()
 
-    # Sidebar buttons
+    # All chores button
     if st.sidebar.button("All Chores", key="all_chores"):
         st.session_state.page = "all_chores"
         st.rerun()
@@ -31,9 +30,9 @@ def design():
             if new_chore_name:
                 if new_chore_name not in [chore['name'].lower() for chore in chores]:
                     new_chore = {"name": new_chore_name.capitalize(), "history": [], "next": ""}
-                    chores.append(new_chore)
-                    save_chore(new_chore)  # Save the updated chores
-                    st.session_state["success_message"] = f"Added Chore: '{new_chore_name}'"
+                    chores.append(new_chore) # update local chores variable
+                    save_chore(new_chore)  # Save to db
+                    st.session_state["success_message"] = f"Added Chore: **'{new_chore_name}'**"
                     st.session_state.page = "all_chores"
                     st.rerun()
                 else:
@@ -44,13 +43,13 @@ def design():
     with st.sidebar.popover("Delete Chore"):
         to_remove = st.text_input("Which chore would you like to delete?").lower().strip()
         if st.button("DELETE", key="delete_button"):
-            matching_chores = [chore for chore in chores if chore['name'].lower() == to_remove]
+            matching_chore = [chore for chore in chores if chore['name'].lower() == to_remove]
 
-            if matching_chores:
-                success = delete_chore(matching_chores[0]['name'])
+            if matching_chore:
+                success = delete_chore(matching_chore[0]['name'])
 
-                chores = [chore for chore in chores if chore['name'].lower() != to_remove]
-                st.session_state["success_message"] = f"Chore '{to_remove.capitalize()}' has been deleted."
+                chores = [chore for chore in chores if chore['name'].lower() != to_remove] # update local chores variable
+                st.session_state["success_message"] = f"Chore **'{to_remove.capitalize()}'** has been deleted."
                 st.session_state.page = "all_chores"
                 st.rerun()
             else:
@@ -69,7 +68,6 @@ def design():
         if not filtered_chores:
             st.sidebar.warning("No such Chore")
 
-    # Display filtered chores
     for chore in filtered_chores:
         if st.sidebar.button(chore["name"], key=f"chore_{chore['name']}"):
             st.session_state.selected_chore = chore['name']
