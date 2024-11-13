@@ -3,9 +3,14 @@ from datetime import datetime
 from firebase_config import load_chores, get_chores_from_cache, save_chore, load_family_data
 
 def mark_as_done(chore, member_name, todays_date):
+    # Ensure 'history' field is initialized as a list if it doesn't exist
+    if 'history' not in chore or not isinstance(chore['history'], list):
+        chore['history'] = []  # Initialize if not present or incorrect type
+
     # calculate history and next
     chore['history'].append([member_name, todays_date]) 
     chore['next'] = calc_next(chore)
+    st.success(f"Updated chore data before saving: {chore}")
     save_chore(chore)
 
     st.session_state["success_message"] = f"**'{chore_name}'** marked as done by **{member_name}** on **{todays_date}**"
