@@ -76,3 +76,11 @@ def save_chores(chores):
         st.error(f"Error saving chores: {e}")
         print(f"Error saving chores: {e}")
 
+def test_firestore_connection():
+    try:
+        test_ref = db.collection("test_collection").document("test_doc")
+        test_ref.set({"status": "connected"})
+        st.success("Firestore connection successful!")
+    except Exception as e:
+        st.error(f"Firestore connection failed: {e}")
+
