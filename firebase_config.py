@@ -77,11 +77,12 @@ def save_chores(chores):
         st.error(f"Error saving chores: {e}")
         print(f"Error saving chores: {e}")
 
-def test_firestore_connection():
+def delete_chore(chore_name):
+    fam_id = st.session_state.get('family_id')
     try:
-        test_ref = db.collection("test_collection").document("test_doc")
-        test_ref.set({"status": "connected"})
-        st.success("Firestore connection successful!")
+        chores_collection_name = f"{fam_id}_chores"
+        chore_ref = db.collection(chores_collection_name).document(chore_name)
+        chore_ref.delete()
+        st.cache_data.clear()
     except Exception as e:
-        st.error(f"Firestore connection failed: {e}")
-
+        print(f"Error deleting chore: {e}")
