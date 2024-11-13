@@ -17,7 +17,7 @@ def design():
     )
 
     # Fetch chores from Firestore
-    chores = get_chores_from_cache().get('chores')
+    chores = get_chores_from_cache()
 
     # Sidebar buttons
     if st.sidebar.button("All Chores", key="all_chores"):
@@ -32,7 +32,7 @@ def design():
                 if new_chore_name not in [chore['name'].lower() for chore in chores]:
                     new_chore = {"name": new_chore_name.capitalize(), "history": [], "next": ""}
                     chores.append(new_chore)
-                    save_chores({"chores": chores})  # Save the updated chores
+                    save_chores(chores)  # Save the updated chores
                     st.session_state["success_message"] = f"Added Chore: '{new_chore_name}'"
                     st.session_state.page = "all_chores"
                     st.rerun()
@@ -47,7 +47,7 @@ def design():
         if st.button("DELETE", key="delete_button"):
             if to_remove in [chore['name'].lower() for chore in chores]:
                 chores = [chore for chore in chores if chore['name'].lower() != to_remove]
-                save_chores({"chores": chores})
+                save_chores(chores)
                 st.session_state["success_message"] = f"Chore '{to_remove.capitalize()}' has been deleted"
                 st.session_state.page = "all_chores"
                 st.rerun()

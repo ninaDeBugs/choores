@@ -20,20 +20,17 @@ firebase_credentials = {
 if not firebase_admin._apps:
     cred = credentials.Certificate(firebase_credentials)
     firebase_admin.initialize_app(cred)
-
-# Firestore client initialization
 db = firestore.client()
 
-# Function to load family data (example)
+# Function to load family data
 def load_family_data():
     try:
         families_ref = db.collection("families")
         families = [doc.to_dict() for doc in families_ref.stream()]
-        return {"families": families}
+        return families
     except Exception as e:
         st.error(f"Error loading family data: {e}")
         print(f"Error loading family data: {e}")
-        # return {"families": []}
 
 # Function to load chores for a specific family (with collection creation if needed)
 def load_chores():
@@ -46,24 +43,20 @@ def load_chores():
         chores_docs = list(chores_ref.stream())
 
         if not chores_docs:
-            return None  
+            return []  # Return an empty list if no chores are found
 
-        # Return the list of chores inside a dictionary
-        chores = [doc.to_dict() for doc in chores_ref.stream()]
-        return {"chores": chores}  # wrap chores list in a dictionary
+        # Return the list of chores directly
+        chores = [doc.to_dict() for doc in chores_docs]
+        return chores
 
     except Exception as e:
         st.error(f"Error loading chores: {e}")
-        # return {"chores": []}  # return empty dictionary if error occurs
+        # return []  # Return an empty list if an error occurs
 
 
-# @st.cache_data(ttl=60)  # Cache for 60 seconds
+@st.cache_data(ttl=60)  # Cache for 1min
 def get_chores_from_cache():
-    chores = load_chores()
-    if chores:
-        return {"chores": chores}  # return as a dictionary
-    else:
-        return {"chores": []}  # return empty list wrapped in a dictionary if no chores found
+    return load_chores()
 
 
 # Function to save chores for a specific family
@@ -73,16 +66,12 @@ def save_chores(chores):
     chores_ref = db.collection(chores_collection_name)
 
     try:
-        # Debugging: Print the chores to see if the new chore is added correctly
-        print("Chores to be saved:", chores)
-
         for chore in chores:
             chore_name = chore["name"]
             chore_ref = chores_ref.document(chore_name)
-            chore_ref.set(chore)  # Save the chore
+            chore_ref.set(chore)
 
-        st.cache_data.clear()  # Clear the cache to ensure data freshness
-
+        st.cache_data.clear()  # Clear cache to ensure data freshness
     except Exception as e:
         st.error(f"Error saving chores: {e}")
         print(f"Error saving chores: {e}")

@@ -23,7 +23,7 @@ def login_page():
             return
 
         # Check if the family ID exists
-        family_info = next((f for f in families_json["families"] if f["ID"] == family_id), None)
+        family_info = next((f for f in families_json if f["ID"] == family_id), None)
         if family_info is None:
             st.error("The Family ID does not exist.")
             return

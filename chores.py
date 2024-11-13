@@ -13,9 +13,8 @@ def all_chores_page():
     st.markdown("<h4 style='text-align: center;'>All Chores</h4>", unsafe_allow_html=True)
 
     # Fetch chores from Firestore
-    chores = get_chores_from_cache().get('chores')
-
-    if chores and chores["chores"]:
+    chores = get_chores_from_cache()
+    if chores:
         for chore in chores:
             if st.button(chore['name']):
                 st.session_state.selected_chore = chore['name']
@@ -37,7 +36,7 @@ def chore_detail_page():
     selected_chore_name = st.session_state.get('selected_chore')
 
     # Fetch chores from Firestore
-    chores = get_chores_from_cache().get('chores')
+    chores = get_chores_from_cache()
 
     # Find the selected chore from the list
     selected_chore = next((chore for chore in chores if chore['name'] == selected_chore_name), None)
@@ -55,7 +54,7 @@ def chore_detail_page():
     # Calculate next member to do the chore
     if not selected_chore['next']:
         selected_chore['next'] = calc_next(selected_chore)
-        save_chores({"chores": chores})  # Save updated chore data back to Firestore
+        save_chores(chores)  # Save updated chore data back to Firestore
 
     st.markdown(f"<h6>Next : <span style='color:#6293e3'>{selected_chore['next']}</span></h6>", unsafe_allow_html=True)
     st.markdown("</br>", unsafe_allow_html=True)

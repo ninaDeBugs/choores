@@ -4,23 +4,24 @@ from firebase_config import load_chores, save_chores, get_chores_from_cache, loa
 
 def mark_as_done(chore_name, member_name, todays_date):
     # Fetch chores from Firestore
-    chores = get_chores_from_cache().get('chores')
+    # chores = get_chores_from_cache().get('chores')
+    chores = get_chores_from_cache()  # Fetch chores directly as a list
 
-    # calculate history & next
+    # Calculate history & next
     for chore in chores:
         if chore['name'] == chore_name:
             chore['history'].append([member_name, todays_date]) 
             chore['next'] = calc_next(chore)
 
     # Save updated chores to Firestore
-    save_chores({"chores": chores})
+    save_chores(chores)
     st.session_state["success_message"] = f"**'{chore_name}'** marked as done by **{member_name}** on **{todays_date}**"
 
 def calc_next(chore):
     # get default member order from Firestore
     family_id = int(st.session_state.get('family_id'))
     families_json = load_family_data()  # Fetch family data from Firestore
-    family_info = next((f for f in families_json["families"] if f["ID"] == family_id), None)
+    family_info = next((f for f in families_json if f["ID"] == family_id), None)
     
     if not family_info:
         st.error("Family data not found.")
