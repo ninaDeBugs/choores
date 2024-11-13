@@ -12,7 +12,7 @@ def mark_as_done(chore, member_name, todays_date):
     chore['next'] = calc_next(chore)
     save_chore(chore)
 
-    st.session_state["success_message"] = f"**'{chore['name']}'** marked as done by **{member_name}** on **{todays_date}**"
+    # st.session_state["success_message"] = f"**'{chore['name']}'** marked as done by **{member_name}** on **{todays_date}**"
     return chore
 
 def calc_next(chore):
