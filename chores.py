@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
 from datetime import datetime
-from firebase_config import load_chores, save_chores, get_chores_from_cache
+from firebase_config import load_chores, get_chores_from_cache, save_chore
 from home import design
 from history import mark_as_done, calc_next
 
@@ -54,7 +54,7 @@ def chore_detail_page():
     # Calculate next member to do the chore
     if not selected_chore['next']:
         selected_chore['next'] = calc_next(selected_chore)
-        save_chores(chores)  # Save updated chore data back to Firestore
+        save_chore(selected_chore)  # Save updated chore data back to Firestore
 
     st.markdown(f"<h6>Next : <span style='color:#6293e3'>{selected_chore['next']}</span></h6>", unsafe_allow_html=True)
     st.markdown("</br>", unsafe_allow_html=True)

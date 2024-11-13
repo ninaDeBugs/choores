@@ -16,7 +16,7 @@ firebase_credentials = {
     "client_x509_cert_url": st.secrets["firebase"]["client_x509_cert_url"]
 }
 
-# Initialize Firebase app (only if it hasn't been initialized yet)
+# Initialize Firebase app iff it hasn't been initialized yet
 if not firebase_admin._apps:
     cred = credentials.Certificate(firebase_credentials)
     firebase_admin.initialize_app(cred)
@@ -32,51 +32,40 @@ def load_family_data():
         st.error(f"Error loading family data: {e}")
         print(f"Error loading family data: {e}")
 
-# Function to load chores for a specific family (with collection creation if needed)
+# Function to load chores for a specific family
 def load_chores():
     fam_id = st.session_state.get('family_id')
     chores_collection_name = f"{fam_id}_chores"
     chores_ref = db.collection(chores_collection_name)
 
     try:
-        # Fetch all the documents in the collection
-        chores_docs = list(chores_ref.stream())
-
+        chores_docs = list(chores_ref.stream()) # Fetch all the documents in the collection
         if not chores_docs:
-            return []  # Return an empty list if no chores are found
+            return [] 
 
-        # Return the list of chores directly
         chores = [doc.to_dict() for doc in chores_docs]
         return chores
 
     except Exception as e:
         st.error(f"Error loading chores: {e}")
-        # return []  # Return an empty list if an error occurs
 
-
-@st.cache_data(ttl=60)  # Cache for 1min
+@st.cache_data(ttl=60)  # Cache load_chores() for 1min
 def get_chores_from_cache():
     return load_chores()
 
-
-# Function to save chores for a specific family
-def save_chores(chores):
-    fam_id = st.session_state.get('family_id')
-    chores_collection_name = f"{fam_id}_chores"
-    chores_ref = db.collection(chores_collection_name)
-
+# update or create chore
+def save_chore(chore):
     try:
-        for chore in chores:
-            chore_name = chore["name"]
-            chore_ref = chores_ref.document(chore_name)
-            chore_ref.set(chore)
-            # st.warning(f"Added chore to db: {chore}")
-
-        st.cache_data.clear()  # Clear cache to ensure data freshness
+        family_id = st.session_state.get('family_id')
+        chores_collection_name = f"{family_id}_chores"
+        chore_name = chore['name']  # Chore name is the document ID
+        chore_ref = db.collection(chores_collection_name).document(chore_name)
+        chore_ref.set(chore) 
+        st.cache_data.clear()
     except Exception as e:
-        st.error(f"Error saving chores: {e}")
-        print(f"Error saving chores: {e}")
+        print(f"Error updating chore: {e}")
 
+# delete chore
 def delete_chore(chore_name):
     fam_id = st.session_state.get('family_id')
     try:

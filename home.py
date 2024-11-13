@@ -1,5 +1,5 @@
 import streamlit as st
-from firebase_config import load_chores, save_chores, get_chores_from_cache, delete_chore  # Import Firestore functions
+from firebase_config import load_chores, get_chores_from_cache, save_chore, delete_chore  # Import Firestore functions
 
 def design():
     family_id = st.session_state.get('family_id')
@@ -32,7 +32,7 @@ def design():
                 if new_chore_name not in [chore['name'].lower() for chore in chores]:
                     new_chore = {"name": new_chore_name.capitalize(), "history": [], "next": ""}
                     chores.append(new_chore)
-                    save_chores(chores)  # Save the updated chores
+                    save_chore(new_chore)  # Save the updated chores
                     st.session_state["success_message"] = f"Added Chore: '{new_chore_name}'"
                     st.session_state.page = "all_chores"
                     st.rerun()
@@ -41,18 +41,6 @@ def design():
             else:
                 st.warning("Please enter a Chore name")
 
-    # Delete chore
-    # with st.sidebar.popover("Delete Chore"):
-    #     to_remove = st.text_input("Which chore would you like to delete?").lower().strip()
-    #     if st.button("DELETE", key="delete_button"):
-    #         if to_remove in [chore['name'].lower() for chore in chores]:
-    #             chores = [chore for chore in chores if chore['name'].lower() != to_remove]
-    #             save_chores(chores)
-    #             st.session_state["success_message"] = f"Chore '{to_remove.capitalize()}' has been deleted"
-    #             st.session_state.page = "all_chores"
-    #             st.rerun()
-    #         else:
-    #             st.error("Chore not found")
     with st.sidebar.popover("Delete Chore"):
         to_remove = st.text_input("Which chore would you like to delete?").lower().strip()
         if st.button("DELETE", key="delete_button"):

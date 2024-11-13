@@ -1,20 +1,19 @@
 import streamlit as st
 from datetime import datetime
-from firebase_config import load_chores, save_chores, get_chores_from_cache, load_family_data
+from firebase_config import load_chores, get_chores_from_cache, save_chore, load_family_data
 
 def mark_as_done(chore_name, member_name, todays_date):
     # Fetch chores from Firestore
-    # chores = get_chores_from_cache().get('chores')
-    chores = get_chores_from_cache()  # Fetch chores directly as a list
+    chores = get_chores_from_cache()
 
     # Calculate history & next
     for chore in chores:
         if chore['name'] == chore_name:
             chore['history'].append([member_name, todays_date]) 
             chore['next'] = calc_next(chore)
+            save_chore(chore)
+            break
 
-    # Save updated chores to Firestore
-    save_chores(chores)
     st.session_state["success_message"] = f"**'{chore_name}'** marked as done by **{member_name}** on **{todays_date}**"
 
 def calc_next(chore):
