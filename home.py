@@ -30,7 +30,7 @@ def design():
         if st.button("Add Chore"):
             if new_chore_name:
                 if new_chore_name not in [chore['name'].lower() for chore in chores]:
-                    new_chore = {"name": new_chore_name.capitalize(), "history": [['James', 'Oct 29']], "next": ""}
+                    new_chore = {"name": new_chore_name.capitalize(), "history": [], "next": ""}
                     chores.append(new_chore)
                     save_chore(new_chore)  # Save the updated chores
                     st.session_state["success_message"] = f"Added Chore: '{new_chore_name.capitalize()}'"
