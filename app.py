@@ -7,13 +7,11 @@ def main():
     st.cache_data.clear() # ensure fresh data from db
 
     if "page" not in st.session_state:
-        st.session_state.page = ""
+        st.session_state.page = "login"
     if "selected_chore" not in st.session_state:
         st.session_state.selected_chore = ""
 
-    # if st.session_state.page == "login":
-    #     login_page()
-    if st.sesson_state.page == "":
+    if st.session_state.page == "login":
         login_page()
     elif st.session_state.page == "home":
         home_page()
