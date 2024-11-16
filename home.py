@@ -51,26 +51,27 @@ def design():
         selected_members = st.multiselect("Add members doing this Chore", options=dft_members)
         
         if st.button("Add Chore"):
-            if new_chore_name:
-                if not selected_members:
-                    st.error("No members selected for this chore.")
-                if new_chore_name.lower() not in [chore['name'].lower() for chore in chores]:
-                    new_chore = {
-                        "name": new_chore_name,
-                        "members": selected_members,
-                        "history": [],
-                        "next": ""
-                    }
-                    chores.append(new_chore)  # Update local chores variable
-                    save_chore(new_chore)  # Save to db
-                    
-                    st.session_state["success_message"] = f"Added Chore: **'{new_chore_name}'**"
-                    st.session_state.page = "all_chores"
-                    st.rerun()
+            if selected_members:
+                if new_chore_name:
+                    if new_chore_name.lower() not in [chore['name'].lower() for chore in chores]:
+                        new_chore = {
+                            "name": new_chore_name,
+                            "members": selected_members,
+                            "history": [],
+                            "next": ""
+                        }
+                        chores.append(new_chore)  # Update local chores variable
+                        save_chore(new_chore)  # Save to db
+                        
+                        st.session_state["success_message"] = f"Added Chore: **'{new_chore_name}'**"
+                        st.session_state.page = "all_chores"
+                        st.rerun()
+                    else:
+                        st.error("Chore already exists")
                 else:
-                    st.error("Chore already exists")
+                    st.warning("Please enter a Chore name")
             else:
-                st.warning("Please enter a Chore name")
+                st.error("No members selected for this chore.")
 
     # Delete chore
     with st.sidebar.expander("Delete Chore"):
@@ -79,7 +80,7 @@ def design():
         
         if st.button("DELETE", key="delete_button"):
             if matching_chore:
-                delete_chore(matching_chore[0]['name'])
+                delete_chore(matching_chore['name'])
 
                 chores = [chore for chore in chores if chore['name'].lower() != to_remove.lower()] # update local chores variable
                 st.session_state["success_message"] = f"Chore **'{to_remove}'** has been deleted."
