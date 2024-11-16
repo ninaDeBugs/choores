@@ -35,7 +35,7 @@ def login_page():
 
         # If both checks pass, update session state and log in
         st.session_state['family_id'] = family_id
-        st.session_state['member_id'] = member_id
+        st.session_state['member_id'] = member_id.capitalize()
         st.session_state.page = "home" 
         st.rerun()  # Refresh to show home page
 

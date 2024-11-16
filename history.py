@@ -13,12 +13,9 @@ def mark_as_done(chore, member_name, todays_date):
 
 
 def calc_next(chore):
-    family_id = int(st.session_state.get('family_id'))
-    families_json = load_family_data()
-    family_info = next((f for f in families_json if f["ID"] == family_id), None)
-    dft_order = family_info['members']  # Default member order
-
     history = chore.get('history', [])
+    dft_order = chore.get('members')
+    
     if not history: # then first member in default order is up next
         ans = dft_order[0]
     else:

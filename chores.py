@@ -46,7 +46,7 @@ def chore_detail_page():
     toronto_tz = ZoneInfo("America/Toronto")
     today = datetime.now(toronto_tz).strftime("%b %d")
     # today = datetime.now().strftime("%b %d")
-    member_name = st.session_state.get('member_id').lower().capitalize()
+    member_name = st.session_state.get('member_id')
     selected_chore_name = st.session_state.get('selected_chore')
 
 
@@ -60,8 +60,7 @@ def chore_detail_page():
         st.rerun()
 
     if "success_message" in st.session_state:
-        st.success(st.session_state["success_message"])
-        del st.session_state["success_message"]
+        st.success(st.session_state.pop("success_message"))
 
     # Calculate next member to do the chore
     if not selected_chore['next']:
