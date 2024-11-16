@@ -40,7 +40,7 @@ def design():
             else:
                 st.warning("Please enter a Chore name")
 
-    with st.sidebar.popover("Delete Chore"):
+    with st.sidebar.expander("Delete Chore"):
         to_remove = st.text_input("Which chore would you like to delete?").lower().strip()
         if st.button("DELETE", key="delete_button"):
             matching_chore = [chore for chore in chores if chore['name'].lower() == to_remove]
