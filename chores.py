@@ -1,28 +1,10 @@
 import streamlit as st
 import pandas as pd
 from datetime import datetime
+from zoneinfo import ZoneInfo
 from firebase_config import get_chores_from_cache, save_chore
 from home import design
 from history import mark_as_done, calc_next
-
-# def all_chores_page():
-#     # -------- st.session_state.page = "all_chores"
-#     design()
-
-#     st.divider()
-#     st.markdown("<h4 style='text-align: center;'>All Chores</h4>", unsafe_allow_html=True)
-
-#     chores = get_chores_from_cache()
-#     if chores:
-#         for chore in chores:
-#             if st.button(chore['name']):
-#                 st.session_state.selected_chore = chore['name']
-#                 st.session_state.page = "chore_detail"
-#                 st.rerun()
-
-#     else:  # if no chores
-#         st.markdown("<h5 style='text-align: center;'> <span style='color:#C3391C'> No chores found </span></h5>", unsafe_allow_html=True)
-#         st.markdown("<p style='text-align: center;'>(Create a new chore in the sidebar)</p>", unsafe_allow_html=True)
 
 def all_chores_page():
     # -------- st.session_state.page = "all_chores"
@@ -61,7 +43,9 @@ def chore_detail_page():
     design()
     st.divider()
 
-    today = datetime.now().strftime("%b %d")
+    toronto_tz = ZoneInfo("America/Toronto")
+    today = datetime.now(toronto_tz).strftime("%b %d")
+    # today = datetime.now().strftime("%b %d")
     member_name = st.session_state.get('member_id').lower().capitalize()
     selected_chore_name = st.session_state.get('selected_chore')
 
