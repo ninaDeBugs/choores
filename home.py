@@ -24,7 +24,7 @@ def design():
         st.rerun()
 
     # Create chore
-    with st.sidebar.popover("Create Chore"):
+    with st.sidebar.expander("Create Chore"):
         new_chore_name = st.text_input("Chore Name").lower().strip()
         if st.button("Add Chore"):
             if new_chore_name:
@@ -54,6 +54,9 @@ def design():
                 st.rerun()
             else:
                 st.error("Chore not found.")
+
+    with st.sidebar.expander("Hello"):
+        st.sidebar.write("hello")
 
     # Show success message if any
     if "success_message" in st.session_state:
