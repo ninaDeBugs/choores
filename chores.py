@@ -56,8 +56,11 @@ def chore_detail_page():
 
     # Mark as done for logged-in member
     if st.button("MARK AS DONE"):
-        selected_chore = mark_as_done(selected_chore, member_name, today)
-        st.rerun()
+        if member_name in selected_chore['members']:
+            selected_chore = mark_as_done(selected_chore, member_name, today)
+            st.rerun()
+        else:
+            st.warning("You were not assigned to this Chore so you can't mark it as done")
 
     if "success_message" in st.session_state:
         st.success(st.session_state.pop("success_message"))
