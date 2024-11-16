@@ -55,9 +55,6 @@ def design():
             else:
                 st.error("Chore not found.")
 
-    with st.sidebar.expander("Hello"):
-        st.sidebar.write("hello")
-
     # Show success message if any
     if "success_message" in st.session_state:
         st.success(st.session_state["success_message"])
