@@ -17,7 +17,7 @@ def calc_next(chore):
     default_order = chore.get('members', [])
     
     # 0. New chores, next is first in default order
-    if not history and not next:
+    if not history and not chore.get('next'):
         return default_order[0]
     
     # 1. Members in history, in order from latest participant
